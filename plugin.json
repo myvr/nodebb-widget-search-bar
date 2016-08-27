@@ -1,0 +1,29 @@
+{
+    "id": "nodebb-widget-search-bar",
+    "name": "Search Bar",
+    "description": "A search bar widget",
+    "url": "",
+    "library": "./library.js",
+    "hooks": [
+        {
+            "hook": "static:app.load",
+            "method": "init"
+        },
+        {
+            "hook": "filter:widgets.getWidgets",
+            "method": "defineWidget"
+        },
+        {
+            "hook": "filter:widget.render:search-bar",
+            "method": "renderSearchBarWidget"
+        }
+    ],
+    "templates": "./public/templates",
+    "less": [
+        "./public/less/search-bar.less"
+    ],
+    "scripts": [
+        "./public/js/search-bar.js"
+    ],
+    "compatibility": "^1.1.2"
+}

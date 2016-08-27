@@ -1,0 +1,19 @@
+{
+  "name": "nodebb-widget-search-bar",
+  "version": "1.0.0",
+  "description": "A search bar widget",
+  "main": "library.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodebb",
+    "widget",
+    "search"
+  ],
+  "author": "Danny Eiden",
+  "license": "ISC",
+  "nbbpm": {
+      "compatibility": "^1.1.2"
+  }
+}

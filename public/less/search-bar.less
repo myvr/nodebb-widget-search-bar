@@ -1,0 +1,70 @@
+.page-unread #searchBarWidget.hide-on-unread,
+.page-tags #searchBarWidget.hide-on-tags,
+.page-topic #searchBarWidget.hide-on-topic,
+.page-home #searchBarWidget.hide-on-home,
+.page-categories #searchBarWidget.hide-on-categories,
+.page-category #searchBarWidget.hide-on-category,
+.page-recent #searchBarWidget.hide-on-recent,
+.page-popular #searchBarWidget.hide-on-popular,
+.page-login #searchBarWidget,
+.page-notifications #searchBarWidget,
+.page-search #searchBarWidget,
+.page-chats #searchBarWidget,
+.page-groups #searchBarWidget,
+.page-users #searchBarWidget {
+    display: None;
+}
+#searchBarWidget {
+    position: relative;
+    .search-button {
+        .pointer();
+    }
+}
+#searchBarWidget ul.search-bar-suggestions {
+    width: 100%;
+    overflow-y: auto;
+    display: block;
+    position: absolute;
+    z-index: 10;
+    list-style: none;
+    text-align: left;
+    background-color: @dropdown-bg;
+    border: 1px solid @dropdown-border;
+    border-top: none;
+    // border-bottom-left-radius: 4px;
+    // border-bottom-right-radius: 4px;
+    .box-shadow(0px 2px 4px rgba(0,0,0,0.175));
+    margin-top: -15px;
+    padding-left: 0px;
+    &:empty {
+        display: none;
+    }
+    li {
+        border-top: solid 1px @dropdown-divider-bg;
+        padding-bottom: 10px;
+        a {
+            color: @dropdown-link-color;
+            h5 {
+                margin-bottom: 5px;
+            }
+            p {
+                font-size: 85%;
+                margin-bottom: 0px;
+            }
+            h5, p {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+        &:hover , &:active{
+            background-color: @dropdown-link-hover-bg;
+            a {
+                color: @dropdown-link-hover-color;
+                text-decoration: none;
+            }
+        }
+    }
+}
