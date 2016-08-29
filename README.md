@@ -1,0 +1,1 @@
+# nodebb-widget-search-bar
