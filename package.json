@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "A search bar widget",
   "main": "library.js",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/myvr/nodebb-widget-search-bar"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,7 +16,7 @@
     "search"
   ],
   "author": "Danny Eiden",
-  "license": "ISC",
+  "license": "ASL 2.0",
   "nbbpm": {
       "compatibility": "^1.1.2"
   }
