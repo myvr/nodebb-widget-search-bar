@@ -1,7 +1,8 @@
 (function(config, app, ajaxify, $, templates) {
     'use strict';
     $(window).on('action:widgets.loaded',function(){
-        var searchBarWidgetSuggestionElements = $('.search-bar-suggestions li'),
+        var searchBarWidgetSuggestionElements =
+                $('#searchBarWidget .search-bar-suggestions li'),
             searchBarWidgetSuggestions,
             selected;
         ajaxify.loadTemplate('search-bar', function(template) {
@@ -18,7 +19,8 @@
             debounce(suggestResults, 200)
         );
         $('#searchBarWidgetInput').keydown(navigateSuggestions);
-        $('.search-bar-suggestions').mouseover(clearSuggestionSelection);
+        $('#searchBarWidget .search-bar-suggestions')
+            .mouseover(clearSuggestionSelection);
 
         function handleSearch(event) {
             event.preventDefault();
@@ -49,7 +51,7 @@
                 $('#searchBarWidget .search-bar-suggestions')
                     .hide()
                     .html(html);
-                searchBarWidgetSuggestionElements = $('.search-bar-suggestions li');
+                searchBarWidgetSuggestionElements = $('#searchBarWidget .search-bar-suggestions li');
                 return;
             }
 
@@ -85,14 +87,16 @@
                 $('#searchBarWidget .search-bar-suggestions')
                     .show()
                     .html(html);
-                searchBarWidgetSuggestionElements = $('.search-bar-suggestions li');
+                searchBarWidgetSuggestionElements = $('#searchBarWidget .search-bar-suggestions li');
             });
         }
 
         function navigateSuggestions(event) {
                 var key = event.keyCode;
 
-                if (key !== 40 && key !== 38  && key !== 13) return;
+                if (key !== 40 && key !== 38  && key !== 13 && key !== 27) {
+                    return;
+                }
 
                 searchBarWidgetSuggestionElements
                     .removeClass('search-bar-selected');
@@ -101,6 +105,10 @@
                     //Enter key
                     var link = selected.find('a:first').attr('href');
                     ajaxify.go(link);
+                    return;
+                } else if (key === 27) {
+                    $('#searchBarWidget .search-bar-suggestions').hide();
+                    selected = null;
                     return;
                 } else if (key === 40) {
                     // Down key
@@ -123,7 +131,7 @@
                 selected.addClass('search-bar-selected');
         }
 
-        function clearSuggestionSelection(event) {
+        function clearSuggestionSelection() {
                 searchBarWidgetSuggestionElements
                     .removeClass('search-bar-selected');
                 selected = null;
