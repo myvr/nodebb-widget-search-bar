@@ -1,7 +1,9 @@
 (function(config, app, ajaxify, $, templates) {
     'use strict';
     $(window).on('action:widgets.loaded',function(){
-        var searchBarWidgetSuggestions;
+        var searchBarWidgetSuggestionElements = $('.search-bar-suggestions li'),
+            searchBarWidgetSuggestions,
+            selected;
         ajaxify.loadTemplate('search-bar', function(template) {
             searchBarWidgetSuggestions = templates.getBlock(
                 template,
@@ -15,6 +17,9 @@
             'input propertychange paste',
             debounce(suggestResults, 200)
         );
+        $('#searchBarWidgetInput').keydown(navigateSuggestions);
+        $('.search-bar-suggestions').mouseover(clearSuggestionSelection);
+
         function handleSearch(event) {
             event.preventDefault();
             if (!config.loggedIn && !config.allowGuestSearching) {
@@ -23,6 +28,11 @@
                     timeout: 3000
                 });
             }
+            // Do not search if someone has selected a suggestion
+            // with arrow keys
+            if (selected) {
+                return;
+            }
             var input = $('#searchBarWidgetInput');
             var query = input.val().replace(/^[ ?#]*/, '');
             if (!query) {
@@ -30,6 +40,7 @@
             }
             ajaxify.go('search/' + query);
         }
+
         function suggestResults(event) {
             var query = event.target.value.replace(/^[ ?#]*/, '');
 
@@ -38,6 +49,7 @@
                 $('#searchBarWidget .search-bar-suggestions')
                     .hide()
                     .html(html);
+                searchBarWidgetSuggestionElements = $('.search-bar-suggestions li');
                 return;
             }
 
@@ -73,7 +85,48 @@
                 $('#searchBarWidget .search-bar-suggestions')
                     .show()
                     .html(html);
+                searchBarWidgetSuggestionElements = $('.search-bar-suggestions li');
             });
+        }
+
+        function navigateSuggestions(event) {
+                var key = event.keyCode;
+
+                if (key !== 40 && key !== 38  && key !== 13) return;
+
+                searchBarWidgetSuggestionElements
+                    .removeClass('search-bar-selected');
+
+                if (key === 13 && selected) {
+                    //Enter key
+                    var link = selected.find('a:first').attr('href');
+                    ajaxify.go(link);
+                    return;
+                } else if (key === 40) {
+                    // Down key
+                    if (!selected || selected.is(':last-child')) {
+                        selected = searchBarWidgetSuggestionElements.eq(0);
+                    }
+                    else {
+                        selected = selected.next();
+                    }
+                } else if (key === 38) {
+                    // Up key
+                    if (!selected || selected.is(':first-child')) {
+                        selected = searchBarWidgetSuggestionElements.last();
+                    }
+                    else {
+                        selected = selected.prev();
+                    }
+                }
+
+                selected.addClass('search-bar-selected');
+        }
+
+        function clearSuggestionSelection(event) {
+                searchBarWidgetSuggestionElements
+                    .removeClass('search-bar-selected');
+                selected = null;
         }
     });
 
