@@ -40,7 +40,7 @@
             if (!query) {
                 return;
             }
-            ajaxify.go('search/' + query);
+            ajaxify.go('search/' + query + "?in=titlesposts");
         }
 
         function suggestResults(event) {
@@ -51,11 +51,12 @@
                 $('#searchBarWidget .search-bar-suggestions')
                     .hide()
                     .html(html);
-                searchBarWidgetSuggestionElements = $('#searchBarWidget .search-bar-suggestions li');
+                searchBarWidgetSuggestionElements =
+                    $('#searchBarWidget .search-bar-suggestions li');
                 return;
             }
 
-            $.getJSON('/api/search/' + query, function(results) {
+            $.getJSON('/api/search/' + query + "?in=titlesposts", function(results) {
                 // Only show the first relevant post in each topic returned
                 // and create a plaintext version of each post's content
                 var posts = {};
@@ -84,10 +85,16 @@
                 var html = templates.parse(searchBarWidgetSuggestions, {
                     searchBarWidgetSuggestions: posts
                 });
-                $('#searchBarWidget .search-bar-suggestions')
-                    .show()
-                    .html(html);
-                searchBarWidgetSuggestionElements = $('#searchBarWidget .search-bar-suggestions li');
+                var searchBarWidgetSuggestionElement =
+                    $('#searchBarWidget .search-bar-suggestions');
+                searchBarWidgetSuggestionElement.html(html);
+                if ($.isEmptyObject(posts)) {
+                    searchBarWidgetSuggestionElement.hide();
+                } else {
+                    searchBarWidgetSuggestionElement.show();
+                }
+                searchBarWidgetSuggestionElements =
+                    $('#searchBarWidget .search-bar-suggestions li');
             });
         }
 
