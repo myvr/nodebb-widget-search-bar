@@ -40,7 +40,12 @@
             if (!query) {
                 return;
             }
-            ajaxify.go('search/' + query + "?in=titlesposts");
+            if (config.version < "1.2") {
+                query = 'search/' + query + "?in=titlesposts";
+            } else {
+                query = 'search/?term=' + query + "&in=titlesposts";
+            }
+            ajaxify.go(query);
         }
 
         function suggestResults(event) {
@@ -55,8 +60,13 @@
                     $('#searchBarWidget .search-bar-suggestions li');
                 return;
             }
+            if (config.version < "1.2") {
+                query = '/api/search/' + query + "?in=titlesposts";
+            } else {
+                query = '/api/search/?term=' + query + "&in=titlesposts";
+            }
 
-            $.getJSON('/api/search/' + query + "?in=titlesposts", function(results) {
+            $.getJSON(query, function(results) {
                 // Only show the first relevant post in each topic returned
                 // and create a plaintext version of each post's content
                 var posts = {};

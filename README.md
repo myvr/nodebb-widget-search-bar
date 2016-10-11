@@ -11,7 +11,9 @@ A search bar widget with suggested results and keyboard controlls.
 `npm install nodebb-widget-search-bar`
 
 ## NodeBB Version
-This widget has been tested on NodeBB 1.1.2
+This widget has been tested
+* NodeBB 1.1.2
+* NodeBB 1.2.1
 
 ## Features
 * Option to show or hide the search bar on the following pages when used globally
@@ -30,4 +32,4 @@ This widget has been tested on NodeBB 1.1.2
   * Arrow keys to navigate suggested results
   * Escape to close suggested results
   * Enter to go to a selected suggested result
-* Respnsive width 
+* Respnsive width

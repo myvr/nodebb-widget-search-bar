@@ -1,6 +1,6 @@
 {
   "name": "nodebb-widget-search-bar",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A search bar widget",
   "main": "library.js",
   "repository": {
