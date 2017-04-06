@@ -70,7 +70,7 @@
                 // Only show the first relevant post in each topic returned
                 // and create a plaintext version of each post's content
                 var posts = {};
-                results.posts.some(function(post) {
+                results.posts.some(function(post, position) {
                     if (Object.keys(posts).length >= 5) {
                         return true;
                     }
@@ -89,11 +89,18 @@
                             )
                         ).text();
                         posts[post.tid] = post;
+                        posts[post.tid].position = posts[post.tid].position || position;
                     }
                 });
 
+                var sortedPosts = $.map(posts, function(value) {
+                    return value;
+                }).sort(function(post1, post2) {
+                    return post1.position > post2.position;
+                });
+
                 var html = templates.parse(searchBarWidgetSuggestions, {
-                    searchBarWidgetSuggestions: posts
+                    searchBarWidgetSuggestions: sortedPosts
                 });
                 var searchBarWidgetSuggestionElement =
                     $('#searchBarWidget .search-bar-suggestions');
