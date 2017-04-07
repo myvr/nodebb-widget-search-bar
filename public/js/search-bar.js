@@ -69,13 +69,13 @@
             $.getJSON(query, function(results) {
                 // Only show the first relevant post in each topic returned
                 // and create a plaintext version of each post's content
-                var posts = {};
-                results.posts.some(function(post, position) {
-                    if (Object.keys(posts).length >= 5) {
+                var postsDict = {};
+                var posts = [];
+                results.posts.some(function(post) {
+                    if (posts.length >= 5) {
                         return true;
                     }
-                    if (!(post.tid in posts) ||
-                            post.timestamp < posts[post.tid].timestamp) {
+                    if (!(post.tid in postsDict)) {
                         // I am so sorry about this
                         // This strips HTML from text, even when there is
                         // HTML within an HTML tag (well, that mostly works)
@@ -88,19 +88,13 @@
                                 ).html()
                             )
                         ).text();
-                        posts[post.tid] = post;
-                        posts[post.tid].position = posts[post.tid].position || position;
+                        postsDict[post.tid] = post;
+                        posts.push(post);
                     }
                 });
 
-                var sortedPosts = $.map(posts, function(value) {
-                    return value;
-                }).sort(function(post1, post2) {
-                    return post1.position > post2.position;
-                });
-
                 var html = templates.parse(searchBarWidgetSuggestions, {
-                    searchBarWidgetSuggestions: sortedPosts
+                    searchBarWidgetSuggestions: posts
                 });
                 var searchBarWidgetSuggestionElement =
                     $('#searchBarWidget .search-bar-suggestions');
