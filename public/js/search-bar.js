@@ -1,16 +1,26 @@
 (function(config, app, ajaxify, $, templates) {
     'use strict';
+    var useTemplates = !!templates;
+    if (useTemplates) {
+        var searchBarWidgetSuggestions;
+        $(window.document).ready(function() {
+            ajaxify.loadTemplate('search-bar', function(template) {
+                searchBarWidgetSuggestions = templates.getBlock(
+                    template,
+                    'searchBarWidgetSuggestions'
+                );
+            });
+        });
+    } else {
+        var benchpress;
+        require(['benchpress'], function(bp) {
+            benchpress = bp;
+        });
+    }
     $(window).on('action:widgets.loaded',function(){
         var searchBarWidgetSuggestionElements =
                 $('#searchBarWidget .search-bar-suggestions li'),
-            searchBarWidgetSuggestions,
             selected;
-        ajaxify.loadTemplate('search-bar', function(template) {
-            searchBarWidgetSuggestions = templates.getBlock(
-                template,
-                'searchBarWidgetSuggestions'
-            );
-        });
 
         $('#searchBarWidget').submit(handleSearch);
         $('#searchBarWidget .search-button').click(handleSearch);
@@ -52,13 +62,7 @@
             var query = event.target.value.replace(/^[ ?#]*/, '');
 
             if (!query || query.length < 3) {
-                var html = templates.parse(searchBarWidgetSuggestions);
-                $('#searchBarWidget .search-bar-suggestions')
-                    .hide()
-                    .html(html);
-                searchBarWidgetSuggestionElements =
-                    $('#searchBarWidget .search-bar-suggestions li');
-                return;
+                renderSuggestions([]);
             }
             if (config.version < "1.2") {
                 query = '/api/search/' + query + "?in=titlesposts";
@@ -92,20 +96,7 @@
                         posts.push(post);
                     }
                 });
-
-                var html = templates.parse(searchBarWidgetSuggestions, {
-                    searchBarWidgetSuggestions: posts
-                });
-                var searchBarWidgetSuggestionElement =
-                    $('#searchBarWidget .search-bar-suggestions');
-                searchBarWidgetSuggestionElement.html(html);
-                if ($.isEmptyObject(posts)) {
-                    searchBarWidgetSuggestionElement.hide();
-                } else {
-                    searchBarWidgetSuggestionElement.show();
-                }
-                searchBarWidgetSuggestionElements =
-                    $('#searchBarWidget .search-bar-suggestions li');
+                renderSuggestions(posts);
             });
         }
 
@@ -119,10 +110,12 @@
                 searchBarWidgetSuggestionElements
                     .removeClass('search-bar-selected');
 
-                if (key === 13 && selected) {
+                if (key === 13) {
                     //Enter key
-                    var link = selected.find('a:first').attr('href');
-                    ajaxify.go(link);
+                    if (selected) {
+                        var link = selected.find('a:first').attr('href');
+                        ajaxify.go(link);
+                    }
                     return;
                 } else if (key === 27) {
                     $('#searchBarWidget .search-bar-suggestions').hide();
@@ -153,6 +146,34 @@
                 searchBarWidgetSuggestionElements
                     .removeClass('search-bar-selected');
                 selected = null;
+        }
+
+        function renderSuggestions(suggestions) {
+            if (useTemplates) {
+                var html = templates.parse(searchBarWidgetSuggestions, {
+                    searchBarWidgetSuggestions: suggestions
+                });
+                renderHTML(html);
+            } else {
+                benchpress.render(
+                    'search-bar',
+                    {searchBarWidgetSuggestions: suggestions},
+                    'searchBarWidgetSuggestions'
+                ).then(renderHTML);
+            }
+
+            function renderHTML(html) {
+                var searchBarWidgetSuggestionElement =
+                    $('#searchBarWidget .search-bar-suggestions');
+                searchBarWidgetSuggestionElement.html(html);
+                if ($.isEmptyObject(suggestions)) {
+                    searchBarWidgetSuggestionElement.hide();
+                } else {
+                    searchBarWidgetSuggestionElement.show();
+                }
+                searchBarWidgetSuggestionElements =
+                    $('#searchBarWidget .search-bar-suggestions li');
+            }
         }
     });
 
@@ -193,4 +214,4 @@
         textArea.innerHTML = encodedString;
         return textArea.value;
     }
-})(config, app, ajaxify, $, templates);
+})(config, app, ajaxify, $, window.templates || null);

@@ -2,10 +2,16 @@
     "use strict";
 
     var async = module.parent.require('async'),
-        templates = module.parent.require('templates.js'),
         fs = require('fs'),
-        path = require('path');
+        path = require('path'),
+        benchpress = null,
+        templates = null;
 
+    try {
+        benchpress = module.parent.require('benchpressjs');
+    } catch(error) {
+        templates = module.parent.require('templates.js');
+    }
 
     var Widget = {
         templates: {}
@@ -36,7 +42,7 @@
     };
 
     Widget.renderSearchBarWidget = function(widget, callback) {
-        var html = templates.parse(Widget.templates['search-bar.tpl'], {
+        var widgetSettings = {
             hideOnUnread: widget.data.hideOnUnread ?
                 'hide-on-unread' : '',
             hideOnTags: widget.data.hideOnTags ?
@@ -53,8 +59,22 @@
                 'hide-on-recent' : '',
             hideOnPopular: widget.data.hideOnPopular ?
                 'hide-on-popular' : '',
-        });
-        callback(null, html);
+        };
+        if (benchpress) {
+            benchpress.compileRender(
+                Widget.templates['search-bar.tpl'],
+                widgetSettings
+            ).then(function(html) {
+                widget.html = html;
+                callback(null, widget);
+            });
+        } else {
+            var html = templates.parse(
+                Widget.templates['search-bar.tpl'],
+                widgetSettings
+            );
+            callback(null, html);
+        }
     };
 
     Widget.defineWidget = function(widgets, callback) {
