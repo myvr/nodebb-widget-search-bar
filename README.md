@@ -15,6 +15,7 @@ This widget has been tested
 * NodeBB 1.1.2
 * NodeBB 1.2.1
 * NodeBB 1.4.5
+* NodeBB 1.7.4
 
 ## Features
 * Option to show or hide the search bar on the following pages when used globally
